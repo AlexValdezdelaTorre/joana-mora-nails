@@ -2,108 +2,88 @@
 <html lang="en">
 <head>
     <title>ClousNailsArt | Uñas Press On en Guadalajara</title>
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="css/style.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400..700&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap" rel="stylesheet">
 </head>
 <body>
+    <!-- Encabezado principal -->
     <header>
        <div class="contenedor-header">
-            <!-- <img class="logo" src="img/logo.jpg" width="250px"> -->
-             <div class="logo-container">
+         <!-- Contenedor del logo redondo -->
+            <div class="logo-container">
                 <img src="img/logo.jpg" alt="Logo Clous Room Nails Art">
             </div>
-
-            <h1 class="titulo">Clous Room Nails Art. </h1>
-            <hr>
+            <!-- Título grande del sitio -->
+            <h1 class="titulo">Clous Room Nail Art. </h1>
         </div>
     </header>
-
+    <!-- Subtítulo y frase debajo del header -->
     <div>
         <h2 class="slogan">Uñas personalizadas que llegan hasta tu puerta.</h2>
         <p class="elige">¡ Elige, personaliza y luce !</p>
     </div>
     
+    <!-- Título de la galería -->
     <div>
         <h2 class="galeria">Galeria de diseños</h2>
     </div>
 
+    <!-- Botones de categorías -->
     <section>
-        <img class="imagenes" src="img/uñas.webp" width="250px">
-        <img class="imagenes" src="img/uñas.webp" width="250px">
-        <img class="imagenes" src="img/uñas.webp" width="250px">
-        <img class="imagenes" src="img/uñas.webp" width="250px">
+        <div class="categorias">
+            <button onclick="abrirGaleria('natural')">💎 Estilo Natural</button>
+            <button onclick="abrirGaleria('vivos')">🎨 Colores Vivos</button>
+            <button onclick="abrirGaleria('especiales')">🌌 Diseños Especiales</button>
+        </div>
     </section>
 
-   <!--  <form action="/formulario" method="post" enctype="multipart/form-data">
-        <div class="container">
-            <div class="pasos">
-                <h2>¿Cómo hacer tu Pedido?</h2>
-                <p>💅 Elige un diseño de la galería o 
-                <span class="parrafo">solicita uno personalizado.</span></p>
-                <p>📏 Mide tus uñas con nuestra guía.</p>
-                <p>📄 Completa el formulario de pedido.</p>
-                <p>🚚 Recibe tus uñas en casa.</p>
-                <button type="button" class="guia-btn" onclick="abrirModal()">📎 Guía para medirte las uñas</button>
+    <!-- Modal contenedor de la galería -->
+    <div id="modalGaleria" class="modal">
+        <div class="modal-contenido-galeria">
+            <span class="cerrar" onclick="cerrarGaleria()">&times;</span>
 
+            <!-- Galerías por categoría -->
 
-                <div id="modalGuia" class="modal">
-                    <div class="modal-contenido">
-                        <span class="cerrar" onclick="cerrarModal()">&times;</span>
-                        <img src="img/uñas.webp" alt="Guía de medición de uñas" class="imagen-modal">
-                    </div>
-                </div>
-                <a href="https://wa.me/523343160070?text=¡Hola!%20Me%20podrías%20dar%20más%20informes%20por%20favor" target="_blank" class="whatsapp-btn">💬 Contáctanos por WhatsApp</a>
+            <!-- Natural -->
+            <div id="galeria-natural" class="imagenes-galeria oculto">
+                <img src="img/uñas.webp" alt="Natural 1" onclick="abrirLightbox(this.src)">
+                <img src="img/uñas.webp" alt="Natural 2" onclick="abrirLightbox(this.src)">
             </div>
-            
-            <div class="formulario">
-                <h2>¡Personaliza tus Uñas!</h2>
-                <input type="text" placeholder="Nombre">
-                <input type="text" placeholder="Diseño deseado">
-                 <select id="estilo" name="estilo" required>
-                    <option value="" disabled selected hidden>Medidas</option>
-                    <option value="2">N.º 2 - 4 mm</option>
-                    <option value="3">N.º 3 - 8 mm</option>
-                    <option value="4">N.º 4 - 12 mm</option>
-                    <option value="5">N.º 5 - 16 mm</option>
-                    <option value="6">N.º 6 - 20 mm</option>
-                    <option value="7">N.º 7 - 24 mm</option>
-                    <option value="8">N.º 8 - 30 mm</option>
-                    <option value="9">N.º 9 - 34 mm</option>
-                </select>
-                <select id="estilo" name="estilo" required>
-                    <option value="" disabled selected hidden>Estilo de uña</option>
-                    <option value="cuadrada">Cuadrada</option>
-                    <option value="almendra">Almendra</option>
-                    <option value="stiletto">Stiletto</option>
-                    <option value="coffin">Coffin</option>
-                </select>
-                <label for="imagenDiseno">Adjuntar imagen del diseño:</label>
-                <div class="input-file-wrapper">
-                    <input type="file" id="imagenDiseno" name="imagenDiseno" class="input-file" accept="image/*">
-                </div>
 
-                <input type="hidden" name="_captcha" value="false">
-                <input type="hidden" name="_next" value="">
-                <button type="submit">¡Cotiza tu diseño!</button>
+            <!-- Vivos -->
+            <div id="galeria-vivos" class="imagenes-galeria oculto">
+                <img src="img/vivo1.jpg" alt="Vivos 1">
+                <img src="img/vivo2.jpg" alt="Vivos 2">
+            </div>
+
+            <!-- Especiales -->
+            <div id="galeria-especiales" class="imagenes-galeria oculto">
+                <img src="img/esp1.jpg" alt="Especial 1">
+                <img src="img/esp2.jpg" alt="Especial 2">
             </div>
         </div>
-        
+    </div>
 
-    </form> -->
-
+    <!-- Contenedor general del formulario y los pasos -->
     <form action="https://formsubmit.co/danae.joamors@gmail.com" method="POST" enctype="multipart/form-data">
         <div class="container">
+
+            <!-- Sección de pasos para guiar al cliente -->
             <div class="pasos">
                 <h2>¿Cómo hacer tu Pedido?</h2>
-                <p>💅 Elige un diseño de la galería o<span class="parrafo">solicita uno personalizado.</span></p>
+                <p>💅 Elige un diseño de la galería o
+                    <span class="parrafo">solicita uno personalizado.</span>
+                </p>
                 <p>📏 Mide tus uñas con nuestra guía.</p>
                 <p>📄 Completa el formulario de pedido.</p>
                 <p>🚚 Recibe tus uñas en casa.</p>
 
-                <button type="button" class="guia-btn" onclick="abrirModal()">📎 Guía para medirte las uñas</button>
+                <!-- Botón para abrir el modal de guía de medidas -->
+                <button type="button" class="guia-btn" onclick="abrirModal()">✋ Guía para medir tus uñas</button>
 
+                <!-- Modal que muestra la imagen de la guía -->
                 <div id="modalGuia" class="modal">
                     <div class="modal-contenido">
                         <span class="cerrar" onclick="cerrarModal()">&times;</span>
@@ -122,54 +102,74 @@
                     <a href="https://wa.me/523343160070?text=¡Hola!%20Me%20podrías%20dar%20más%20informes%20por%20favor" target="_blank" aria-label="WhatsApp">
                         <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
                     </a>
+                </div>
             </div>
-        </div>
 
-        <div class="formulario">
-            <h2>¡Personaliza tus Uñas!</h2>
-            <input type="text" name="nombre" placeholder="Nombre" required>
-            <input type="text" name="contacto" placeholder="Telefono o Email" required>
-            <input type="text" name="diseno" placeholder="Diseño deseado" required>
+            <!-- Formulario para personalizar uñas -->
+            <div class="formulario">
+                <h2>¡Personaliza tus Uñas!</h2>
+
+                <!-- Datos del cliente -->
+                <input type="text" name="nombre" placeholder="Nombre" required>
+                <input type="text" name="contacto" placeholder="Telefono o Email" required>
+                <input type="text" name="diseno" placeholder="Diseño deseado" required>
             
-            <select id="medidas" name="medidas" required>
-                <option value="" disabled selected hidden>Medidas</option>
-                <option value="2">N.º 2 - 4 mm</option>
-                <option value="3">N.º 3 - 8 mm</option>
-                <option value="4">N.º 4 - 12 mm</option>
-                <option value="5">N.º 5 - 16 mm</option>
-                <option value="6">N.º 6 - 20 mm</option>
-                <option value="7">N.º 7 - 24 mm</option>
-                <option value="8">N.º 8 - 30 mm</option>
-                <option value="9">N.º 9 - 34 mm</option>
-            </select>
+                <!-- Medidas y estilo -->
+                <select id="medidas" name="medidas" required>
+                    <option value="" disabled selected hidden>Medidas</option>
+                    <option value="2">N.º 2 - 4 mm</option>
+                    <option value="3">N.º 3 - 8 mm</option>
+                    <option value="4">N.º 4 - 12 mm</option>
+                    <option value="5">N.º 5 - 16 mm</option>
+                    <option value="6">N.º 6 - 20 mm</option>
+                    <option value="7">N.º 7 - 24 mm</option>
+                    <option value="8">N.º 8 - 30 mm</option>
+                    <option value="9">N.º 9 - 34 mm</option>
+                </select>
 
-            <select id="estilo" name="estilo" required>
-                <option value="" disabled selected hidden>Estilo de uña</option>
-                <option value="cuadrada">Cuadrada</option>
-                <option value="almendra">Almendra</option>
-                <option value="stiletto">Stiletto</option>
-                <option value="coffin">Coffin</option>
-            </select>
+                <select id="estilo" name="estilo" required>
+                    <option value="" disabled selected hidden>Estilo de uña</option>
+                    <option value="cuadrada">Cuadrada</option>
+                    <option value="almendra">Almendra</option>
+                    <option value="stiletto">Stiletto</option>
+                    <option value="coffin">Coffin</option>
+                </select>
 
-            <label for="imagenDiseno">Adjuntar imagen del diseño:</label>
-            <div class="input-file-wrapper">
-                <input type="file" id="imagenDiseno" name="imagenDiseno" class="input-file" accept="image/*" required>
+                <!-- Subida de imagen -->
+                <label for="imagenDiseno">Adjuntar imagen del diseño:</label>
+                <div class="input-file-wrapper">
+                    <input type="file" id="imagenDiseno" name="imagenDiseno" class="input-file" accept="image/*" required>
+                </div>
+
+                <!-- Campos ocultos para controlar comportamiento Formsubmit-->
+                <input type="hidden" name="_captcha" value="false">
+                <input type="hidden" name="_next" value="https://clous-nails-art.netlify.app/gracias.html">
+
+                <!-- Botón para enviar -->
+                <button type="submit">🧾 ¡Cotiza tu diseño!</button>
             </div>
-
-            <!-- Campos ocultos para controlar comportamiento -->
-            <input type="hidden" name="_captcha" value="false">
-            <input type="hidden" name="_next" value="https://clous-nails-art.netlify.app/gracias.html">
-
-
-            <button type="submit">¡Cotiza tu diseño!</button>
         </div>
-    </div>
-</form>
+    </form>
 
 
     <script src="main.js"></script>
 
+    <!-- Lightbox (imagen ampliada) -->
+    <div id="lightbox" class="lightbox oculto">
+        <span class="cerrar-lightbox" onclick="cerrarLightbox()">&times;</span>
+        <img id="lightbox-img" src="" alt="Imagen ampliada">
+    </div>
+
     
 </body>
-<footer><h3>redes sociales</h3></footer>
+
+<!-- Footer -->
+<footer class="footer">
+  <div class="footer-contenido">
+    <h3>Clous Room Nail Art </h3>
+    <p>Gracias por confiar en nosotros para tu estilo ✨</p>
+    <small>© 2025 Clous Room Nails Art. Todos los derechos reservados.</small>
+  </div>
+</footer>
+
 </html>
