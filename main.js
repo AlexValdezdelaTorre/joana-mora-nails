@@ -1,77 +1,62 @@
+// Mostrar el nombre del archivo seleccionado
+function mostrarNombreArchivo() {
+  const input = document.getElementById('imagenDiseno');
+  const nombreArchivo = input.files.length > 0 ? input.files[0].name : 'Adjuntar imagen de diseño';
+  const nombreSpan = document.getElementById('file-name');
+  if (nombreSpan) nombreSpan.textContent = nombreArchivo;
+}
 
+// Abrir y cerrar el modal de la guía
+function abrirModal() {
+  const modal = document.getElementById("modalGuia");
+  if (modal) modal.style.display = "block";
+}
 
- function mostrarNombreArchivo() {
-    const input = document.getElementById('imagenDiseno');
-    const nombreArchivo = input.files.length > 0 ? input.files[0].name : 'Adjuntar imagen de diseño';
-    document.getElementById('file-name').textContent = nombreArchivo;
-  }
+function cerrarModal() {
+  const modal = document.getElementById("modalGuia");
+  if (modal) modal.style.display = "none";
+}
 
-  function abrirModal() {
-    document.getElementById("modalGuia").style.display = "block";
-  }
+// Abrir galería por categoría
+function abrirGaleria(categoria) {
+  const modal = document.getElementById("modalGaleria");
+  if (modal) modal.style.display = "block";
 
-  function cerrarModal() {
-    document.getElementById("modalGuia").style.display = "none";
-  }
+  document.querySelectorAll(".imagenes-galeria").forEach(g => g.classList.add("oculto"));
 
-  window.onclick = function(event) {
-    const modal = document.getElementById("modalGuia");
-    if (event.target == modal) {
-      modal.style.display = "none";
-    }
-  }
+  const galeriaSeleccionada = document.getElementById("galeria-" + categoria);
+  if (galeriaSeleccionada) galeriaSeleccionada.classList.remove("oculto");
+}
 
-  /* function mostrarGaleria(categoria) {
-    const galerias = document.querySelectorAll('.imagenes-galeria');
-    galerias.forEach(g => g.classList.add('oculto'));
+function cerrarGaleria() {
+  const modal = document.getElementById("modalGaleria");
+  if (modal) modal.style.display = "none";
+}
 
-    const galeriaSeleccionada = document.getElementById('galeria-' + categoria);
-    galeriaSeleccionada.classList.remove('oculto');
-  } */
-
-    function abrirGaleria(categoria) {
-    const modal = document.getElementById("modalGaleria");
-    modal.style.display = "block";
-
-    // Oculta todas las galerías
-    const galerias = document.querySelectorAll(".imagenes-galeria");
-    galerias.forEach(g => g.classList.add("oculto"));
-
-    // Muestra la seleccionada
-    const galeriaSeleccionada = document.getElementById("galeria-" + categoria);
-    galeriaSeleccionada.classList.remove("oculto");
-  }
-
-  function cerrarGaleria() {
-    document.getElementById("modalGaleria").style.display = "none";
-  }
-
-  // Cierra si hace clic fuera del modal
-  window.onclick = function(event) {
-    const modal = document.getElementById("modalGaleria");
-    if (event.target === modal) {
-      modal.style.display = "none";
-    }
-  }
-
-  // Abrir imagen en lightbox
+// Abrir imagen en lightbox
 function abrirLightbox(src) {
   const lightbox = document.getElementById("lightbox");
   const lightboxImg = document.getElementById("lightbox-img");
-  lightboxImg.src = src;
-  lightbox.classList.remove("oculto");
+  if (lightbox && lightboxImg) {
+    lightboxImg.src = src;
+    lightbox.classList.remove("oculto");
+  }
 }
 
 // Cerrar lightbox
 function cerrarLightbox() {
-  document.getElementById("lightbox").classList.add("oculto");
+  const lightbox = document.getElementById("lightbox");
+  if (lightbox) lightbox.classList.add("oculto");
 }
 
-// Cerrar al hacer clic fuera de la imagen
-window.addEventListener("click", function (e) {
+// Manejo global de clics para cerrar modales al hacer clic fuera
+window.addEventListener("click", function (event) {
+  const modalGuia = document.getElementById("modalGuia");
+  const modalGaleria = document.getElementById("modalGaleria");
   const lightbox = document.getElementById("lightbox");
-  const img = document.getElementById("lightbox-img");
-  if (e.target === lightbox && e.target !== img) {
-    cerrarLightbox();
-  }
+  const lightboxImg = document.getElementById("lightbox-img");
+
+  if (event.target === modalGuia) cerrarModal();
+  if (event.target === modalGaleria) cerrarGaleria();
+  if (event.target === lightbox && event.target !== lightboxImg) cerrarLightbox();
 });
