@@ -1,4 +1,5 @@
 // === Nombre de archivo seleccionado ===
+
 function mostrarNombreArchivo() {
   const input = document.getElementById('imagenDiseno');
   const nombreArchivo = input && input.files.length > 0
@@ -37,10 +38,19 @@ function abrirGaleria() {
 
   modalGaleria?.classList.add('is-open');
   modalGaleria?.setAttribute('aria-hidden', 'false');
+
+  document.documentElement.classList.add('no-scroll');
+  document.body.classList.add('no-scroll');
+
 }
+
 function cerrarGaleria() {
   modalGaleria?.classList.remove('is-open');
   modalGaleria?.setAttribute('aria-hidden', 'true');
+
+  document.documentElement.classList.remove('no-scroll');
+  document.body.classList.remove('no-scroll');
+
 }
 
 // Listeners de abrir/cerrar

@@ -14,9 +14,13 @@
   --ring: rgba(169,133,214,.25);
 }
 
-*{ box-sizing:border-box; }
+*{ 
+  box-sizing:border-box; 
+}
+
 html,body{
-  margin:0; padding:0;
+  margin:0; 
+  padding:0;
   font-family:'Montserrat', sans-serif;
   color:var(--text);
   background: linear-gradient(180deg, #F6F0FA, #ECE3F5);
@@ -25,14 +29,28 @@ html,body{
 
 /* Accesibilidad */
 .sr-only{
-  position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); border:0;
+  position:absolute; 
+  width:1px; 
+  height:1px; 
+  padding:0; 
+  margin:-1px; 
+  overflow:hidden; 
+  clip:rect(0,0,0,0); 
+  border:0;
 }
 
 /* ===== Header ===== */
-header{ padding:48px 16px 24px; }
+
 .contenedor-header{
-  max-width:1100px; margin:0 auto;
-  display:flex; align-items:center; gap:20px;
+  max-width:100%;
+  margin:0 auto;
+  padding: 30px 400px 30px 0;
+  display:flex; 
+  justify-content: center;
+  align-items:center; 
+  gap:70px;
+  background-color: color-mix(in srgb, var(--lila-dark) 70%, transparent);
+
 }
 
 .logo-container img{
@@ -102,17 +120,52 @@ header{ padding:48px 16px 24px; }
 } 
 
 .modal-contenido-galeria{
-  max-width:980px; margin:64px auto; background:var(--card);
-  border-radius:16px; padding:20px; box-shadow:var(--shadow);
-  border:1px solid var(--line);
+  position: relative;                     
+  max-width: 980px;
+  width: min(92vw, 980px);
+  margin: 64px auto;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  display: flex;                          
+  flex-direction: column;
+  max-height: 92dvh;                      
+  overflow: hidden;                       
+  padding: 20px 20px 12px;
 }
 
-/* ✅ Panel del modal de GUÍA  */
-.modal-contenido{
-  max-width:720px; margin:64px auto; background:var(--card);
-  border-radius:16px; padding:20px; box-shadow:var(--shadow);
-  border:1px solid var(--line); position:relative;
+/*  La galería DENTRO del modal sí scrollea */
+.modal-contenido-galeria .imagenes-galeria{
+  overflow-y: auto;                       
+  -webkit-overflow-scrolling: touch;      
+  padding: 8px 0;
+  display: grid;                          
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
 }
+
+/*  Bloquea solo el fondo cuando el modal esté abierto */
+html.no-scroll, body.no-scroll { overflow: hidden; }
+
+
+/* ✅ Panel del modal de GUÍA  */
+
+.modal-contenido{
+  position: relative;
+  max-width: 720px;
+  width: min(92vw, 720px);
+  margin: 64px auto;
+  background: var(--card);
+  border-radius: 16px;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--line);
+  max-height: 92dvh;       
+  overflow-y: auto;          
+  -webkit-overflow-scrolling: touch; 
+  padding: 20px;
+}
+
 
 .cerrar{
   position:absolute; top:12px; right:14px;
@@ -226,7 +279,8 @@ header{ padding:48px 16px 24px; }
 
 /* ===== Footer ===== */
 .footer{ 
-  background:var(--lila-dark); color:#fff; padding:32px 16px; 
+  background:var(--lila-dark); color:#fff; 
+  padding:32px 16px; 
 }
 
 .footer-contenido{ 
@@ -255,6 +309,74 @@ header{ padding:48px 16px 24px; }
     width:140px; height:140px; 
   }
 }
+
+/* === Celulares pequeños (hasta ~480px, ej: iPhone SE, Android chicos) === */
+@media (max-width:480px){
+  .contenedor-header{ 
+    flex-direction: column; 
+    gap: 8px; 
+    padding: 10px 10px; 
+  }
+  .logo-container img{ 
+    width:110px; height:110px; 
+  }
+  h1, h2, h3 { font-size: 1.2rem; } 
+  p { font-size: 0.9rem; line-height: 1.4; }
+  button { width: 100%; } 
+}
+
+/* === Celulares medianos (481px a 640px, muchos Android) === */
+@media (max-width:640px){
+  .contenedor-header{ 
+    flex-direction: column; 
+    gap: 12px; 
+    text-align: center; 
+    padding: 20px 20px;
+  }
+  .logo-container img{ 
+    width:140px; height:140px; 
+  }
+}
+
+/* === Tablets verticales (~768px) === */
+@media (max-width:768px){
+  nav ul{
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  section{ 
+    padding: 40px 20px; 
+  }
+
+  .galeria img{ 
+    max-width: 100%; 
+  }
+}
+
+/* === Tablets horizontales y pantallas medianas (~1024px) === */
+@media (max-width:1024px){
+  .contenedor-header{ 
+    flex-direction: row; 
+    padding: 20px 20px; 
+  }
+
+  .galeria{ 
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  }
+}
+
+/* === Laptops pequeñas (~1280px) === */
+@media (max-width:1280px){
+  .contenedor-header{ 
+    max-width: 95%; 
+  }
+
+  section{ 
+    padding: 60px 40px; 
+  }
+}
+
 
 
 
