@@ -1,75 +1,117 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>¡Gracias por tu pedido!</title>
+
   <style>
 
-    body {
-      font-family: 'Segoe UI', sans-serif;
-      background: #fff0f6;
-      color: #333;
-      margin: 0;
-      padding: 0;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-      text-align: center;
-    }
+:root{
+  --bg: #F6F0FA;
+  --text: #3A2D46;
+  --lila: #C7AEE6;
+  --lila-dark: #A985D6;
+  --shadow: 0 10px 28px rgba(58,45,70,.10);
+  --ring: rgba(199,174,230,.35);
+}
 
-    .logo-container {
-    width: 243px; 
-    height: 250px;
-    margin-bottom: 60px;
-    border-radius: 50%;
-    overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: white;
-    }
+    /* Layout base */
+body {
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+}
 
-    .logo-container img {
-     width: 122%;
-    height: auto;
-    }
+/* ——— Logo */
+.logo-container{
+  width: 260px;
+  aspect-ratio: 1/1;
+  margin-bottom: 44px;
+  position: relative;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: transparent;
+  overflow: visible;
+}
+
+/* Borde lila sutil (el aro) */
+.logo-container::after{
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid #C7AEE6;     
+}
+
+/* Halo exterior muy tenue */
+.logo-container::before{
+  content: "";
+  position: absolute;
+  inset: -10px;                  
+  border-radius: 50%;
+  box-shadow: 0 0 0 8px rgba(199,174,230,.25);  
+}
+
+/* La imagen centrada sin recorte */
+.logo-container img{
+  width: 86%;
+  height: 86%;
+  object-fit: contain;             
+  display: block;
+  border-radius: 50%;              
+}
 
 
-    h1 {
-      color: rgba(137, 63, 207, 0.5);
-      font-size: 2em;
-      margin-bottom: 10px;
-    }
+h1 {
+  color: rgba(137, 63, 207, 0.70);
+  font-size: clamp(1.6rem, 2.8vw, 2.2rem);
+  margin: 0 0 10px;
+  font-weight: 800;
+  letter-spacing: .2px;
+}
 
-    p {
-      font-size: 1.2em;
-      margin-bottom: 100px;
-    }
+p {
+  font-size: clamp(1rem, 2.2vw, 1.2rem);
+  margin: 0 0 32px;
+  color: #554765;
+}
 
-    a {
-      display: inline-block;
-      padding: 10px 20px;
-      background-color: rgba(131, 25, 230, 0.5);
-      color: white;
-      text-decoration: none;
-      border-radius: 8px;
-      transition: background-color 0.3s ease;
-    }
+a {
+  display: inline-block;
+  padding: 12px 20px;
+  background: linear-gradient(180deg, var(--lila-dark), var(--lila));
+  color: #fff;
+  text-decoration: none;
+  border-radius: 12px;
+  font-weight: 700;
+  box-shadow: var(--shadow);
+  transition: filter .2s ease, transform .08s ease;
+}
 
-    a:hover {
-      background-color: rgb(233, 129, 164);
-    }
+a:hover { 
+  filter: brightness(1.06); transform: translateY(-1px); 
+}
+
   </style>
 </head>
 <body>
   <div class="logo-container">
-    <img src="img/logo.jpg" alt="Logo Clous Room Nails Art">
+    <img src="img/logo-Jo.png" alt="Logo Joana Mora">
   </div>
-  <h1>💖 ¡Gracias por tu pedido!</h1>
+
+  <h1>🔮 ¡Gracias por tu pedido!</h1>
   <p>Hemos recibido tu solicitud y nos pondremos en contacto contigo muy pronto.</p>
+
   <a href="index.html">Volver al inicio</a>
 </body>
 </html>
