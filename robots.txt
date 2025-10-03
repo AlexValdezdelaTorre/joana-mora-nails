@@ -1,0 +1,5 @@
+
+User-agent: *
+Allow: /
+
+Sitemap: https://joana-mora-nails.netlify.app/sitemap.xml
