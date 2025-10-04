@@ -625,6 +625,48 @@ html.no-scroll, body.no-scroll { overflow: hidden; }
   }
 }
 
+/* === Hasta 780px: columna normal === */
+@media (max-width: 780px) {
+  .header-buttons {
+    position: static !important;
+    margin: 12px auto 0;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .header-buttons a,
+  .header-buttons button {
+    width: 70%;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.7rem;
+    border-radius: 6px;
+  }
+}
+
+/* === Hasta 420px: más compactos (celulares medianos) === */
+@media (max-width: 420px) {
+  .header-buttons a,
+  .header-buttons button {
+    width: 85%;
+    font-size: 0.75rem;
+    padding: 0.35rem 0.55rem;
+  }
+}
+
+/* === Hasta 370px: celulares muy pequeños === */
+@media (max-width: 370px) {
+  .header-buttons a,
+  .header-buttons button {
+    width: 95%;
+    font-size: 0.7rem;
+    padding: 0.3rem 0.5rem;
+  }
+}
+
+
 
 
 
