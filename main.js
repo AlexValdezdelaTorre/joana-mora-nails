@@ -92,3 +92,26 @@ window.addEventListener('click', function (event) {
   const lightboxImg = document.getElementById('lightbox-img');
   if (event.target === lightbox && event.target !== lightboxImg) cerrarLightbox();
 });
+
+// Abrir modal
+document.querySelectorAll("[data-open]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const modalId = btn.getAttribute("data-open");
+    document.getElementById(modalId).style.display = "flex";
+  });
+});
+
+// Cerrar modal
+document.querySelectorAll("[data-close]").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const modalId = btn.getAttribute("data-close");
+    document.getElementById(modalId).style.display = "none";
+  });
+});
+
+// Cerrar clickeando fuera del contenido
+document.querySelectorAll(".modal").forEach(modal => {
+  modal.addEventListener("click", e => {
+    if (e.target === modal) modal.style.display = "none";
+  });
+});

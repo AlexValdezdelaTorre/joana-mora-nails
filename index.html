@@ -37,6 +37,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
   <!-- Estilos -->
   <link rel="stylesheet" href="css/style.css">
@@ -74,12 +75,39 @@
         <h1 class="titulo">Joana Mora</h1>
         <h2 class="subtitulo">Nails Studio</h2>
       </div>
-    </div>
+      <div class="header-buttons">
+        <a href="https://wa.me/5213344782571?text=Hola%20Joana,%20quiero%20agendar%20una%20cita%20💅" 
+   class="btn-cta" target="_blank" rel="noopener noreferrer">
+  Agenda tu cita
+</a>
+
+        <button class="btn-resenas" data-open="modalResenas">Experiencias de nuestras clientas</button>
+      </div>
+    </div>    
   </header>
+
+  <!-- Modal aparte -->
+<div id="modalResenas" class="modal">
+  <div class="modal-content">
+    <h2>Experiencias de nuestras clientas</h2>
+    <p>“Un trabajo impecable, delicado y elegante.” – Mariana</p>
+    <p>“Me encantó la atención, mis uñas quedaron hermosas.” – Fernanda</p>
+    <p>“Definitivamente mi nuevo lugar favorito.” – Alejandra</p>
+    
+    <button class="btn-cerrar" data-close="modalResenas">Cerrar</button>
+  </div>
+</div>
 
   <!-- Hero / Slogan -->
   <section>
-    <h2 class="slogan">Uñas personalizadas en Guadalajara · Diseño elegante a tu medida</h2>
+    <h2 class="slogan"> ¡ Más que uñas, una experiencia !</h2>
+    <div class="ritual-card">
+  <p>
+    Transformamos tu esencia en arte, un ritual de belleza que convierte cada uña en algo único.
+  </p>
+</div>
+
+
     <p class="elige">¡Elige, personaliza y luce!</p>
   </section>
 
@@ -87,7 +115,7 @@
   <section>
     <h2 class="galeria" style="text-align:center">Galería de diseños</h2>
     <div class="categorias">
-      <button type="button" id="btnGaleria">💎 Ver Diseños</button>
+      <button type="button" id="btnGaleria"> 🪬 Ver Diseños</button>
     </div>
   </section>
 
@@ -152,10 +180,13 @@
             <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram">
           </a>
           <a href="https://www.tiktok.com/@TU_USUARIO" target="_blank" aria-label="TikTok">
-            <img src="https://cdn-icons-png.flaticon.com/512/3046/3046122.png" alt="TikTok">
+            <i class="fa-brands fa-tiktok"></i>
           </a>
           <a href="https://wa.me/523344782571?text=Hola%20Joana%2C%20me%20podrías%20hacer%20una%20cotización%20por%20favor?" target="_blank" aria-label="WhatsApp">
             <img src="https://cdn-icons-png.flaticon.com/512/733/733585.png" alt="WhatsApp">
+          </a>
+          <a href="https://www.facebook.com/profile.php?id=61581762269081#" target="_blank" aria-label="Facebook">
+            <img src="https://cdn-icons-png.flaticon.com/512/733/733547.png" alt="Facebook">
           </a>
         </div>
       </div>
@@ -214,10 +245,15 @@
   <footer class="footer">
     <div class="footer-contenido">
       <h3>Joana Mora</h3>
-      <p>Gracias por confiar en nuestro trabajo ✨</p>
-      <small>© 2025 Joana Mora Nails Studio. Todos los derechos reservados.</small>
+      <p>Gracias por confiar en nuestro trabajo 🔮</p>
+        <small>© 2025 Joana Mora Nails Studio. Todos los derechos reservados.</small>
+      <p class="credito">
+        Página diseñada por 
+        <a href="https://norrkode.netlify.app" target="_blank" rel="noopener noreferrer">Norr<span class="span">K</span>ode</a>
+      </p>
     </div>
   </footer>
+
 
   <!-- JS -->
   <script src="main.js"></script>
