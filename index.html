@@ -9,7 +9,7 @@
 <title>Joana Mora · Uñas Personalizadas & Nail Art · Uñas Press On</title>
 <meta name="description" content="Uñas personalizadas elegantes hechas a tu medida. Diseños exclusivos de Joana Mora con entrega en Guadalajara.">
 <link rel="canonical" href="https://joana-mora-nails.netlify.app/">
-<link rel="manifest" href="/manifest.webmanifest">
+<link rel="manifest" href="manifest.webmanifest">
 <meta name="theme-color" content="#A78BFA">
 
 <meta name="robots" content="index, follow">
@@ -261,10 +261,9 @@
   <!-- JS -->
   <script src="main.js"></script>
   <script>
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js');
-  }
-</script>
+    if ('serviceWorker' in navigator) navigator.serviceWorker.register('/sw.js');
+  </script>
+
 
 </body>
 </html>
