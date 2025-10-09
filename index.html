@@ -9,6 +9,9 @@
 <title>Joana Mora · Uñas Personalizadas & Nail Art · Uñas Press On</title>
 <meta name="description" content="Uñas personalizadas elegantes hechas a tu medida. Diseños exclusivos de Joana Mora con entrega en Guadalajara.">
 <link rel="canonical" href="https://joana-mora-nails.netlify.app/">
+<link rel="manifest" href="/manifest.webmanifest">
+<meta name="theme-color" content="#A78BFA">
+
 <meta name="robots" content="index, follow">
 
 <!-- Colores de navegador -->
@@ -179,7 +182,7 @@
           <a href="https://www.instagram.com/nailsjomora/" target="_blank" aria-label="Instagram">
             <img src="https://cdn-icons-png.flaticon.com/512/174/174855.png" alt="Instagram">
           </a>
-          <a href="https://www.tiktok.com/@TU_USUARIO" target="_blank" aria-label="TikTok">
+          <a href="https://www.tiktok.com/@jomoranails" target="_blank" aria-label="TikTok">
             <i class="fa-brands fa-tiktok"></i>
           </a>
           <a href="https://wa.me/523344782571?text=Hola%20Joana%2C%20me%20podrías%20hacer%20una%20cotización%20por%20favor?" target="_blank" aria-label="WhatsApp">
@@ -257,5 +260,11 @@
 
   <!-- JS -->
   <script src="main.js"></script>
+  <script>
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js');
+  }
+</script>
+
 </body>
 </html>
