@@ -1,0 +1,16 @@
+
+<!doctype html>
+<html lang="es">
+<head><meta charset="utf-8"><title>Test Supabase</title></head>
+<body>
+  <h3>Probando Supabase… abre la consola (F12)</h3>
+
+  <script type="module">
+    import { supabase } from "./supabaseClient.js";
+
+    const { data, error } = await supabase.from("customers").select("*");
+    if (error) console.error("ERROR:", error);
+    else console.log("OK, datos:", data);
+  </script>
+</body>
+</html>
