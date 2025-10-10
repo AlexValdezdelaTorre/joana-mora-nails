@@ -28,7 +28,7 @@
     .qr{display:grid;place-items:center;margin-top:12px}
 
     /* Recompensas */
-    .section-title{margin:18px 0 8px;font-size:1.05rem;color:var(--morado-osc)}
+    .section-title{margin:18px 0 8px;font-size:1.05rem;color:#6b21a8}
     .rewards .reward{
       background:#fff;border-radius:14px;padding:12px;margin:10px 0;
       box-shadow:0 8px 22px #00000014;border:1px solid var(--borde)
@@ -153,7 +153,6 @@
       const lastKey = `lastCycle_${id}`;
       const prev = parseInt(localStorage.getItem(lastKey) || '-1', 10);
       if (prev !== cycle) {
-        // limpiamos posibles claves del ciclo anterior
         localStorage.removeItem(`celebrated_${id}_${prev}_5`);
         localStorage.removeItem(`celebrated_${id}_${prev}_10`);
         localStorage.setItem(lastKey, String(cycle));
@@ -195,20 +194,29 @@
       const mock = parseInt(new URLSearchParams(location.search).get('mock'));
       if (isLocal && !Number.isNaN(mock)) stamps = mock;
 
-      const claimedUpTo = data.claimed_up_to ?? 0; // 0 | 5 | 10
-      const cycle       = data.cycle ?? 0;
+      let claimedUpTo = data.claimed_up_to ?? 0; // 0 | 5 | 10
+      const cycle     = data.cycle ?? 0;
 
       // Sincroniza banderas locales con ciclo y maneja bajadas de sellos
       syncCycleFlags(data.id, cycle);
       resetFlagsIfStampsDecreased(data.id, stamps);
 
+      // 🔧 **Parche de inferencia local**:
+      // si el admin sólo reseteó stamps a 0 al canjear 5 (y no actualizó claimed_up_to),
+      // deducimos que ya canjeó 5 si antes tenía >=5 y ahora está <5.
+      const lastSeen = parseInt(localStorage.getItem(`lastStamps_${data.id}`) || '0', 10);
+      let effectiveClaimedUpTo = claimedUpTo;
+      if (claimedUpTo < 5 && lastSeen >= 5 && stamps < 5) {
+        effectiveClaimedUpTo = 5;
+      }
+
       sellos.textContent = stamps;
 
-      // Vista acumulativa (si canjeó 5, la de 10 dirá “faltan 5” aunque stamps sea 0)
-      renderRewards(stamps, claimedUpTo);
+      // Vista acumulativa usando el valor efectivo
+      renderRewards(stamps, effectiveClaimedUpTo);
 
       // Confetti sólo cuando alcanzas 5/10 que NO estén canjeados en este ciclo
-      maybeCelebrate(data.id, stamps, claimedUpTo, cycle);
+      maybeCelebrate(data.id, stamps, effectiveClaimedUpTo, cycle);
 
       // Forzar confetti en pruebas: &celebra=1
       const force = new URLSearchParams(location.search).get('celebra');
