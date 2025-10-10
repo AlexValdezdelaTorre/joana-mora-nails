@@ -19,6 +19,12 @@
   <div class="wrap">
     <h2>Escanear tarjeta</h2>
     <div id="reader" class="box"></div>
+    <div class="box" style="display:flex; gap:8px; align-items:center; justify-content:flex-end">
+  <button id="swapCam" style="padding:8px 12px; border-radius:10px; border:1px solid #e5e7eb;">
+    Cambiar cámara
+  </button>
+</div>
+
 
     <div class="box">
       <div style="display:flex; gap:8px; flex-wrap:wrap">
@@ -30,45 +36,88 @@
     </div>
   </div>
 
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <script>
-    // Escáner (obtiene ?id=... desde el QR)
-    const reader = new Html5Qrcode("reader");
-    Html5Qrcode.getCameras().then(cams=>{
-      if(!cams.length) return;
-      reader.start(cams[0].id,{fps:10,qrbox:250},(text)=>{
-        try{
-          const u=new URL(text);
-          const got=new URLSearchParams(u.search).get("id");
-          if(got){ document.getElementById('id').value=got; setStatus(`✅ Detectado ID: ${got}`,'ok'); }
-        }catch(e){ /* QR no es URL, ignoramos */ }
-      });
-    }).catch(()=>{ /* sin cámara, no pasa nada */ });
+<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+<script>
+  // ====== Escáner (elige trasera por defecto y permite alternar) ======
+  const reader = new Html5Qrcode("reader");
+  let cams = [];
+  let idx = 0; // índice de cámara actual
 
-    // Llamar a la función serverless
-    async function stamp(){
-      const id = document.getElementById('id').value.trim();
-      const pin = document.getElementById('pin').value.trim();
-      if(!id || !pin) return setStatus('Falta ID o PIN','err');
-
-      setStatus('Enviando…');
-      try{
-        const r = await fetch('/.netlify/functions/stamp', {
-          method:'POST',
-          headers:{'Content-Type':'application/json'},
-          body: JSON.stringify({ id, pin })
-        });
-        const j = await r.json();
-        if(!r.ok || !j.ok) throw new Error(j.msg || j.error || 'Error');
-        const newStamps = j.data?.[0]?.stamps ?? '—';
-        setStatus(`🎉 Sello sumado. Total: ${newStamps}`, 'ok');
-      }catch(e){
-        setStatus('❌ ' + e.message, 'err');
+  function onScan(text){
+    try{
+      const u = new URL(text);
+      const got = new URLSearchParams(u.search).get("id");
+      if(got){
+        document.getElementById('id').value = got;
+        setStatus(`✅ Detectado ID: ${got}`,'ok');
       }
+    }catch(e){
+      // QR no es URL, lo ignoramos silenciosamente
     }
-    document.getElementById('btn').onclick = stamp;
+  }
 
-    function setStatus(msg, cls=''){ const el=document.getElementById('status'); el.className=cls; el.textContent=msg; }
-  </script>
-</body>
-</html>
+  async function startCam(){
+    // Detén si había una cámara activa
+    try { await reader.stop(); } catch(_) {}
+
+    const selected = cams[idx];
+    try{
+      if (selected) {
+        await reader.start(selected.id, { fps: 10, qrbox: 250 }, onScan);
+      } else {
+        // Fallback si no tenemos lista de cámaras (intenta back camera por facingMode)
+        await reader.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 }, onScan);
+      }
+      setStatus('Cámara lista');
+    }catch(e){
+      setStatus('No se pudo iniciar la cámara: ' + e.message, 'err');
+    }
+  }
+
+  // Detecta cámaras y prioriza la trasera
+  Html5Qrcode.getCameras().then(devs=>{
+    cams = devs || [];
+    const backIx = cams.findIndex(d => /back|rear|environment|trás|atras|atrás/i.test(d.label));
+    idx = backIx >= 0 ? backIx : 0;
+    startCam();
+  }).catch(()=>{
+    // Sin lista de cámaras, intenta facingMode
+    startCam();
+  });
+
+  // Botón para alternar entre cámaras disponibles
+  document.getElementById('swapCam').onclick = () => {
+    if (!cams.length) { setStatus('No hay más cámaras para alternar','err'); return; }
+    idx = (idx + 1) % cams.length;
+    startCam();
+  };
+
+  // ====== Llamar a la función serverless (sumar sello) ======
+  async function stamp(){
+    const id  = document.getElementById('id').value.trim();
+    const pin = document.getElementById('pin').value.trim();
+    if(!id || !pin) return setStatus('Falta ID o PIN','err');
+
+    setStatus('Enviando…');
+    try{
+      const r = await fetch('/.netlify/functions/stamp', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ id, pin })
+      });
+      const j = await r.json();
+      if(!r.ok || !j.ok) throw new Error(j.msg || j.error || 'Error');
+      const newStamps = j.data?.[0]?.stamps ?? '—';
+      setStatus(`🎉 Sello sumado. Total: ${newStamps}`, 'ok');
+    }catch(e){
+      setStatus('❌ ' + e.message, 'err');
+    }
+  }
+  document.getElementById('btn').onclick = stamp;
+
+  function setStatus(msg, cls=''){
+    const el = document.getElementById('status');
+    el.className = cls;
+    el.textContent = msg;
+  }
+</script>
