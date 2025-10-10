@@ -1,0 +1,12 @@
+# Local Netlify folder
+.netlify
+
+# Archivos de entorno (¡no subir nunca!)
+.env
+.env.*
+!.env.example   # Permite subir un ejemplo sin secretos
+
+# Netlify y build
+.netlify/
+dist/
+

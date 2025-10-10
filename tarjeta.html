@@ -1,0 +1,50 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Tarjeta Jo Nails</title>
+  <meta name="theme-color" content="#A78BFA" />
+  <link rel="manifest" href="manifest.webmanifest">
+  <style>
+    body{background:#f7f7fb;font-family:system-ui,Segoe UI,Roboto,Arial}
+    .card{max-width:420px;margin:40px auto;padding:22px;background:#fff;border-radius:18px;box-shadow:0 12px 30px rgba(0,0,0,.08)}
+    h2{margin:0 0 6px}
+    .meta{color:#6b7280;font-size:14px}
+    .stamps{font-size:28px;font-weight:800;margin:10px 0}
+    .qr{display:grid;place-items:center;margin-top:12px}
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h2 id="nombre">Cargando…</h2>
+    <div class="meta">Clienta de Joana Mora Nails Studio </div>
+    <div class="stamps"><span id="sellos">0</span> sellos</div>
+    <div class="qr"><canvas id="qr"></canvas></div>
+  </div>
+
+  <script type="module">
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+    import QRCode from "https://esm.sh/qrcode@1.5.3";
+
+    const SUPABASE_URL  = "https://ovqwsturtwluwvvaucmk.supabase.co";   
+    const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXdzdHVydHdsdXd2dmF1Y21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDU2MjYsImV4cCI6MjA3NTQ4MTYyNn0.vtteeCxjL6inYWiIXwYU7tTjID237mGU4l9EOnqvydY";              
+    const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
+
+    const id = new URLSearchParams(location.search).get("id");
+    if (!id) { document.body.innerHTML = "<p style='padding:24px'>Falta ?id=...</p>"; throw new Error("No id"); }
+
+    const { data, error } = await supabase.from("customers").select("*").eq("id", id).single();
+    if (error || !data) {
+      document.body.innerHTML = "<p style='padding:24px'>No encontré a esta clienta.</p>";
+      console.error(error); 
+    } else {
+      nombre.textContent = data.name;
+      sellos.textContent = data.stamps ?? 0;
+      const cardUrl = `${location.origin}${location.pathname}?id=${id}`;
+      QRCode.toCanvas(document.getElementById("qr"), cardUrl, { width: 220 });
+    }
+  </script>
+</body>
+</html>

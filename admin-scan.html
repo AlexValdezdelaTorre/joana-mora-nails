@@ -1,0 +1,74 @@
+
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Jo • Escáner de tarjetas</title>
+  <style>
+    body{font-family:system-ui,Segoe UI,Roboto,Arial;margin:0;padding:24px;background:#f7f7fb}
+    .wrap{max-width:560px;margin:auto}
+    #reader{width:100%;min-height:320px;border-radius:14px;overflow:hidden;background:#0001}
+    .box{background:#fff;border-radius:14px;padding:14px;margin-top:14px;box-shadow:0 10px 24px #0001}
+    input,button{padding:10px 14px;border-radius:10px;border:1px solid #e5e7eb}
+    button{background:#A78BFA;color:#fff;border:0;font-weight:700;cursor:pointer}
+    .ok{color:#16a34a} .err{color:#dc2626}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h2>Escanear tarjeta</h2>
+    <div id="reader" class="box"></div>
+
+    <div class="box">
+      <div style="display:flex; gap:8px; flex-wrap:wrap">
+        <input id="id" placeholder="ID del cliente (UUID)" style="flex:1" />
+        <input id="pin" placeholder="PIN" type="password" style="width:120px" />
+        <button id="btn">+1 sello</button>
+      </div>
+      <div id="status" style="margin-top:8px;color:#6b7280">Escanea un QR o pega un ID.</div>
+    </div>
+  </div>
+
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+  <script>
+    // Escáner (obtiene ?id=... desde el QR)
+    const reader = new Html5Qrcode("reader");
+    Html5Qrcode.getCameras().then(cams=>{
+      if(!cams.length) return;
+      reader.start(cams[0].id,{fps:10,qrbox:250},(text)=>{
+        try{
+          const u=new URL(text);
+          const got=new URLSearchParams(u.search).get("id");
+          if(got){ document.getElementById('id').value=got; setStatus(`✅ Detectado ID: ${got}`,'ok'); }
+        }catch(e){ /* QR no es URL, ignoramos */ }
+      });
+    }).catch(()=>{ /* sin cámara, no pasa nada */ });
+
+    // Llamar a la función serverless
+    async function stamp(){
+      const id = document.getElementById('id').value.trim();
+      const pin = document.getElementById('pin').value.trim();
+      if(!id || !pin) return setStatus('Falta ID o PIN','err');
+
+      setStatus('Enviando…');
+      try{
+        const r = await fetch('/.netlify/functions/stamp', {
+          method:'POST',
+          headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({ id, pin })
+        });
+        const j = await r.json();
+        if(!r.ok || !j.ok) throw new Error(j.msg || j.error || 'Error');
+        const newStamps = j.data?.[0]?.stamps ?? '—';
+        setStatus(`🎉 Sello sumado. Total: ${newStamps}`, 'ok');
+      }catch(e){
+        setStatus('❌ ' + e.message, 'err');
+      }
+    }
+    document.getElementById('btn').onclick = stamp;
+
+    function setStatus(msg, cls=''){ const el=document.getElementById('status'); el.className=cls; el.textContent=msg; }
+  </script>
+</body>
+</html>
