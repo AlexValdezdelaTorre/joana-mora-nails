@@ -31,6 +31,10 @@
         <input id="id" placeholder="ID del cliente (UUID)" style="flex:1" />
         <input id="pin" placeholder="PIN" type="password" style="width:120px" />
         <button id="btn">+1 sello</button>
+        
+        <button id="redeem5"  style="background:#f59e0b">Canjear 5</button>
+        <button id="redeem10" style="background:#ef4444">Canjear 10</button>
+
       </div>
       <div id="status" style="margin-top:8px;color:#6b7280">Escanea un QR o pega un ID.</div>
     </div>
@@ -120,4 +124,27 @@
     el.className = cls;
     el.textContent = msg;
   }
+    async function redeem(need){
+    const id  = document.getElementById('id').value.trim();
+    const pin = document.getElementById('pin').value.trim();
+    if(!id || !pin) return setStatus('Falta ID o PIN','err');
+
+    setStatus(`Canjeando ${need}…`);
+    try{
+      const r = await fetch('/.netlify/functions/redeem_reward', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body: JSON.stringify({ id, pin, need })
+      });
+      const j = await r.json();
+      if(!r.ok || !j.ok) throw new Error(j.msg || j.error || 'Error');
+      setStatus(`🎁 Canjeado ${need}. Total ahora: ${j.after}`, 'ok');
+    }catch(e){
+      setStatus('❌ ' + e.message, 'err');
+    }
+  }
+
+  document.getElementById('redeem5').onclick  = () => redeem(5);
+  document.getElementById('redeem10').onclick = () => redeem(10);
+</script>
 </script>

@@ -1,3 +1,4 @@
+// netlify/functions/stamp.js
 import { createClient } from '@supabase/supabase-js';
 
 const J = (s, b) => ({ statusCode: s, headers:{'Content-Type':'application/json'}, body: JSON.stringify(b) });
@@ -23,7 +24,10 @@ export async function handler(event) {
     const inc = Number(body.inc ?? 1);
 
     if (!id || !pin) return J(400, { ok:false, where:'validate', msg:'Falta id o pin' });
-    if (pin !== String(process.env.ADMIN_PIN).trim()) return J(401, { ok:false, where:'pin', msg:'PIN inválido' });
+
+    const envPin = (process.env.ADMIN_PIN ?? '').toString().trim();
+    if (!envPin) return J(500, { ok:false, where:'env', msg:'ADMIN_PIN no definido (revisa .env y reinicia "netlify dev")' });
+    if (pin !== envPin) return J(401, { ok:false, where:'pin', msg:'PIN inválido' });
 
     const { SUPABASE_URL, SUPABASE_SERVICE_KEY } = process.env;
     if (!SUPABASE_URL || !SUPABASE_SERVICE_KEY) return J(500, { ok:false, where:'env', msg:'Faltan env vars' });
