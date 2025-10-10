@@ -66,7 +66,7 @@
   </div>
 
   <!-- Confetti -->
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
 
   <script type="module">
     import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
@@ -76,36 +76,55 @@
     const SUPABASE_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im92cXdzdHVydHdsdXd2dmF1Y21rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTk5MDU2MjYsImV4cCI6MjA3NTQ4MTYyNn0.vtteeCxjL6inYWiIXwYU7tTjID237mGU4l9EOnqvydY";
     const supabase = createClient(SUPABASE_URL, SUPABASE_ANON);
 
-    // Config de recompensas
+    // Hitos absolutos (5 y 10)
     const REWARDS = [
       { need: 5,  prize: "10% de descuento" },
       { need: 10, prize: "Pedicure Spa Gratis" }
     ];
 
-    function renderRewards(stamps){
-      const wrap = document.getElementById('rewards');
-      const items = REWARDS.map(r => {
-        const left = Math.max(0, r.need - stamps);
-        const ok   = left === 0;
-        const pct  = Math.min(100, (stamps / r.need) * 100);
+    /** =================== ACUMULATIVO =================== **/
 
-        return `
-          <div class="reward ${ok ? 'done' : ''}">
-            <div class="reward-head">
-              <span class="chip">${r.need} sellos</span>
-              <strong>${r.prize}</strong>
-            </div>
-            <div class="reward-body">
-              ${ok ? '✅ ¡Conseguida!' : `Te faltan <b>${left}</b> sello${left!==1?'s':''}.`}
-              <div class="bar"><span style="width:${pct}%"></span></div>
-            </div>
-          </div>`;
-      }).join('');
-
-      wrap.innerHTML = `<h3 class="section-title">Recompensas</h3>${items}`;
+    // Calcula progreso *relativo* a la última meta canjeada (claimed_up_to = 0|5|10)
+    function computeProgress(stamps, claimedUpTo) {
+      return REWARDS.map(r => {
+        if (claimedUpTo >= r.need) {
+          return { ...r, left: 0, ok: true, pct: 100, label: "✅ ¡Conseguida!" };
+        }
+        const base = claimedUpTo;                  // 0 o 5
+        const relative = Math.max(0, stamps - base);
+        const target   = r.need - base;            // ej 10-5 = 5
+        const left     = Math.max(0, target - relative);
+        const pct      = Math.min(100, (relative / target) * 100);
+        return {
+          ...r,
+          left, ok: left === 0, pct,
+          label: left === 0
+            ? "✅ ¡Conseguida!"
+            : `Te faltan <b>${left}</b> sello${left!==1?'s':''}.`
+        };
+      });
     }
 
-    // --- Confeti & celebración ---
+    function renderRewards(stamps, claimedUpTo){
+      const view = computeProgress(stamps, claimedUpTo);
+      const html = view.map(v => `
+        <div class="reward ${v.ok ? 'done' : ''}">
+          <div class="reward-head">
+            <span class="chip">${v.need} sellos</span>
+            <strong>${v.prize}</strong>
+          </div>
+          <div class="reward-body">
+            ${v.label}
+            <div class="bar"><span style="width:${v.pct}%"></span></div>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('rewards').innerHTML =
+        `<h3 class="section-title">Recompensas</h3>${html}`;
+    }
+
+    /** =================== CONFETTI POR CICLO =================== **/
+
     function burstConfetti() {
       const end = Date.now() + 600;
       (function frame() {
@@ -119,69 +138,84 @@
       })();
     }
 
-    // Evita festejar la misma meta en el mismo dispositivo
-    function maybeCelebrate(id, stamps) {
-      const hit = REWARDS.find(r => stamps === r.need);
+    // Festeja sólo metas NO canjeadas aún, y resetea en cada cycle
+    function maybeCelebrate(id, stamps, claimedUpTo, cycle) {
+      const hit = REWARDS.find(r => stamps === r.need && claimedUpTo < r.need);
       if (!hit) return;
-      const key = `celebrated_${id}_${stamps}`;
+      const key = `celebrated_${id}_${cycle}_${stamps}`;
       if (localStorage.getItem(key)) return;
       localStorage.setItem(key, '1');
       burstConfetti();
     }
 
-    // ===== Carga de datos =====
+    // Si cambia el ciclo en DB, limpiamos banderas locales antiguas
+    function syncCycleFlags(id, cycle) {
+      const lastKey = `lastCycle_${id}`;
+      const prev = parseInt(localStorage.getItem(lastKey) || '-1', 10);
+      if (prev !== cycle) {
+        // limpiamos posibles claves del ciclo anterior
+        localStorage.removeItem(`celebrated_${id}_${prev}_5`);
+        localStorage.removeItem(`celebrated_${id}_${prev}_10`);
+        localStorage.setItem(lastKey, String(cycle));
+      }
+    }
+
+    // (Opcional) si trabajas “consumiendo sellos” al canjear, limpia banderas si bajan
+    function resetFlagsIfStampsDecreased(id, stamps) {
+      const lastKey = `lastStamps_${id}`;
+      const last = parseInt(localStorage.getItem(lastKey) || '0', 10);
+      if (Number.isFinite(last) && stamps < last) {
+        const cycle = parseInt(localStorage.getItem(`lastCycle_${id}`) || '0', 10);
+        localStorage.removeItem(`celebrated_${id}_${cycle}_5`);
+        localStorage.removeItem(`celebrated_${id}_${cycle}_10`);
+      }
+      localStorage.setItem(lastKey, String(stamps));
+    }
+
+    /** =================== CARGA =================== **/
+
     const id = new URLSearchParams(location.search).get("id");
     if (!id) { document.body.innerHTML = "<p style='padding:24px'>Falta ?id=...</p>"; throw new Error("No id"); }
 
-    const { data, error } = await supabase.from("customers").select("*").eq("id", id).single();
+    const { data, error } = await supabase
+      .from("customers")
+      .select("id, name, stamps, claimed_up_to, cycle")
+      .eq("id", id)
+      .single();
+
     if (error || !data) {
       document.body.innerHTML = "<p style='padding:24px'>No encontré a esta clienta.</p>";
       console.error(error);
     } else {
       nombre.textContent = data.name;
 
-      // Soporte mock en local: ?mock=11
+      // Mock rápido en local: ?mock=11
       let stamps = data.stamps ?? 0;
       const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
       const mock = parseInt(new URLSearchParams(location.search).get('mock'));
       if (isLocal && !Number.isNaN(mock)) stamps = mock;
 
+      const claimedUpTo = data.claimed_up_to ?? 0; // 0 | 5 | 10
+      const cycle       = data.cycle ?? 0;
+
+      // Sincroniza banderas locales con ciclo y maneja bajadas de sellos
+      syncCycleFlags(data.id, cycle);
+      resetFlagsIfStampsDecreased(data.id, stamps);
+
       sellos.textContent = stamps;
 
-      // Render recompensas y celebrar
-      renderRewards(stamps);
-      // Fallback: si por caché no se pintó, lo forzamos
-      if (!document.getElementById('rewards').innerHTML.trim()) {
-        const wrap = document.getElementById('rewards');
-        const milestones = REWARDS;
-        let html = '<h3 class="section-title">Recompensas</h3>';
-        for (const m of milestones) {
-          const left = Math.max(0, m.need - stamps);
-          const ok   = left === 0;
-          const pct  = Math.min(100, (stamps / m.need) * 100);
-          html += `
-            <div class="reward ${ok ? 'done' : ''}">
-              <div class="reward-head">
-                <span class="chip">${m.need} sellos</span>
-                <strong>${m.prize}</strong>
-              </div>
-              <div class="reward-body">
-                ${ok ? '✅ ¡Conseguida!' : `Te faltan <b>${left}</b> sello${left!==1?'s':''}.`}
-                <div class="bar"><span style="width:${pct}%"></span></div>
-              </div>
-            </div>`;
-        }
-        wrap.innerHTML = html;
-      }
+      // Vista acumulativa (si canjeó 5, la de 10 dirá “faltan 5” aunque stamps sea 0)
+      renderRewards(stamps, claimedUpTo);
 
-      // Confeti cuando alcanzas justo 5 o 10
-      maybeCelebrate(id, stamps);
+      // Confetti sólo cuando alcanzas 5/10 que NO estén canjeados en este ciclo
+      maybeCelebrate(data.id, stamps, claimedUpTo, cycle);
 
-      // Forzar confeti en pruebas: &celebra=1
+      // Forzar confetti en pruebas: &celebra=1
       const force = new URLSearchParams(location.search).get('celebra');
       if (force === '1') burstConfetti();
 
-      const cardUrl = `${location.origin}${location.pathname}?id=${id}`;
+      // QR de la tarjeta
+      const cardUrl = `${location.origin}${location.pathname}?id=${data.id}`;
       QRCode.toCanvas(document.getElementById("qr"), cardUrl, { width: 220 });
     }
   </script>
