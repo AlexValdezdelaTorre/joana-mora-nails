@@ -1,5 +1,4 @@
 // === Nombre de archivo seleccionado ===
-
 function mostrarNombreArchivo() {
   const input = document.getElementById('imagenDiseno');
   const nombreArchivo = input && input.files.length > 0
@@ -10,108 +9,150 @@ function mostrarNombreArchivo() {
 }
 document.getElementById('imagenDiseno')?.addEventListener('change', mostrarNombreArchivo);
 
-// === Modal guía ===
-function abrirModal() {
-  const modal = document.getElementById('modalGuia');
-  if (modal) {
-    modal.classList.add('is-open');
-    modal.setAttribute('aria-hidden', 'false');
+// =========================
+//  SISTEMA DE MODALES (UNIFICADO POR CLASES)
+//  - No se usa style.display, solo clases.
+//  - Usa .is-open para mostrar y aria-hidden para accesibilidad.
+//  - Soporta data-open y data-close.
+// =========================
+
+const HTML_EL = document.documentElement;
+const BODY_EL = document.body;
+
+function lockScroll() {
+  HTML_EL.classList.add('no-scroll');
+  BODY_EL.classList.add('no-scroll');
+}
+function unlockScroll() {
+  HTML_EL.classList.remove('no-scroll');
+  BODY_EL.classList.remove('no-scroll');
+}
+
+function openModalById(id) {
+  const modal = document.getElementById(id);
+  if (!modal) return;
+  // limpiar posibles inline styles heredados de código previo
+  modal.style.removeProperty('display');
+
+  modal.classList.add('is-open');
+  modal.classList.remove('oculto', 'hidden');
+  modal.setAttribute('aria-hidden', 'false');
+
+  // si este modal necesita bloquear scroll (galería/guía), puedes marcarlo en HTML con data-lock-scroll
+  if (modal.matches('#modalGaleria, #modalGuia') || modal.hasAttribute('data-lock-scroll')) {
+    lockScroll();
   }
 }
-function cerrarModal() {
-  const modal = document.getElementById('modalGuia');
-  if (modal) {
-    modal.classList.remove('is-open');
-    modal.setAttribute('aria-hidden', 'true');
+
+function closeModalByEl(modal) {
+  if (!modal) return;
+  modal.classList.remove('is-open');
+  modal.setAttribute('aria-hidden', 'true');
+
+  // por si tu CSS usa .oculto para esconder
+  modal.classList.add('oculto');
+
+  // quitar bloqueo si era de los que bloquean
+  if (modal.matches('#modalGaleria, #modalGuia') || modal.hasAttribute('data-lock-scroll')) {
+    unlockScroll();
   }
 }
 
-// === Galería: un solo botón / un solo contenedor ===
-const btnGaleria = document.getElementById('btnGaleria');
-const modalGaleria = document.getElementById('modalGaleria');
-const btnCerrarGaleria = document.getElementById('btnCerrarGaleria');
-
-function abrirGaleria() {
-  // Oculta cualquier otra galería por si quedaron restos
-  document.querySelectorAll('.imagenes-galeria').forEach(g => g.classList.add('oculto'));
-  document.getElementById('galeria-todas')?.classList.remove('oculto');
-
-  modalGaleria?.classList.add('is-open');
-  modalGaleria?.setAttribute('aria-hidden', 'false');
-
-  document.documentElement.classList.add('no-scroll');
-  document.body.classList.add('no-scroll');
-
+function closeModalById(id) {
+  const modal = document.getElementById(id);
+  closeModalByEl(modal);
 }
 
-function cerrarGaleria() {
-  modalGaleria?.classList.remove('is-open');
-  modalGaleria?.setAttribute('aria-hidden', 'true');
+// Delegación: abrir
+document.addEventListener('click', (e) => {
+  const openBtn = e.target.closest('[data-open]');
+  if (openBtn) {
+    const modalId = openBtn.getAttribute('data-open');
+    if (modalId) openModalById(modalId);
+  }
+});
 
-  document.documentElement.classList.remove('no-scroll');
-  document.body.classList.remove('no-scroll');
+// Delegación: cerrar (botones internos)
+document.addEventListener('click', (e) => {
+  const closeBtn = e.target.closest('[data-close]');
+  if (closeBtn) {
+    const modalId = closeBtn.getAttribute('data-close');
+    if (modalId) {
+      closeModalById(modalId);
+    } else {
+      // Si no trae id, cerramos el modal ancestro
+      const modal = closeBtn.closest('.modal');
+      closeModalByEl(modal);
+    }
+  }
+});
 
-}
-
-// Listeners de abrir/cerrar
-btnGaleria?.addEventListener('click', abrirGaleria);
-btnCerrarGaleria?.addEventListener('click', cerrarGaleria);
-
-
-window.addEventListener('click', (e) => {
-  const modalGuia = document.getElementById('modalGuia');
-  const modalGaleria = document.getElementById('modalGaleria');
-  if (e.target === modalGuia) cerrarModal();
-  if (e.target === modalGaleria) cerrarGaleria();
+// Cerrar clickeando fuera del contenido (en el backdrop)
+document.addEventListener('click', (e) => {
+  const modal = e.target.closest('.modal');
+  // Si se hizo click en un .modal (el contenedor) y el target ES el modal (no el panel interno)
+  document.querySelectorAll('.modal.is-open').forEach((m) => {
+    if (e.target === m) closeModalByEl(m);
+  });
 });
 
 // Cerrar con ESC
 window.addEventListener('keydown', (e) => {
   if (e.key === 'Escape') {
-    cerrarModal();
-    cerrarGaleria();
-    cerrarLightbox();
+    document.querySelectorAll('.modal.is-open').forEach(closeModalByEl);
+    cerrarLightbox(); // por si el lightbox está abierto
   }
 });
 
-// === Lightbox ===
+// =========================
+//  COMPAT: API específica que ya usabas para Guía y Galería
+//  (redirigen a las funciones unificadas)
+// =========================
+function abrirModal() { openModalById('modalGuia'); }
+function cerrarModal() { closeModalById('modalGuia'); }
+
+function abrirGaleria() { openModalById('modalGaleria'); }
+function cerrarGaleria() { closeModalById('modalGaleria'); }
+
+// Si tienes botones viejos apuntando a estas funciones, se mantienen:
+const btnGaleria = document.getElementById('btnGaleria');
+const btnCerrarGaleria = document.getElementById('btnCerrarGaleria');
+btnGaleria?.addEventListener('click', abrirGaleria);
+btnCerrarGaleria?.addEventListener('click', cerrarGaleria);
+
+// =========================
+//  LIGHTBOX (se mantiene igual, solo sin mezclar con display inline)
+// =========================
 function abrirLightbox(src) {
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
   if (lightbox && lightboxImg) {
     lightboxImg.src = src;
     lightbox.classList.remove('oculto');
+    lightbox.setAttribute('aria-hidden', 'false');
+    lockScroll();
   }
 }
 function cerrarLightbox() {
   const lightbox = document.getElementById('lightbox');
-  if (lightbox) lightbox.classList.add('oculto');
+  if (lightbox) {
+    lightbox.classList.add('oculto');
+    lightbox.setAttribute('aria-hidden', 'true');
+    unlockScroll();
+  }
 }
+// Cerrar lightbox clickeando fuera de la imagen
 window.addEventListener('click', function (event) {
   const lightbox = document.getElementById('lightbox');
   const lightboxImg = document.getElementById('lightbox-img');
+  if (!lightbox) return;
   if (event.target === lightbox && event.target !== lightboxImg) cerrarLightbox();
 });
 
-// Abrir modal
-document.querySelectorAll("[data-open]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const modalId = btn.getAttribute("data-open");
-    document.getElementById(modalId).style.display = "flex";
-  });
-});
-
-// Cerrar modal
-document.querySelectorAll("[data-close]").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const modalId = btn.getAttribute("data-close");
-    document.getElementById(modalId).style.display = "none";
-  });
-});
-
-// Cerrar clickeando fuera del contenido
-document.querySelectorAll(".modal").forEach(modal => {
-  modal.addEventListener("click", e => {
-    if (e.target === modal) modal.style.display = "none";
-  });
-});
+// =========================
+//  IMPORTANTE: Se eliminan los viejos listeners que usaban style.display
+//  (ya NO uses estos bloques en tu HTML o JS):
+//  - document.querySelectorAll("[data-open]") con style.display="flex"
+//  - document.querySelectorAll("[data-close]") con style.display="none"
+//  - querySelectorAll(".modal") cerrando por style.display
+// =========================
