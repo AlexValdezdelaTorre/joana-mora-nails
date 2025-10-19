@@ -27,8 +27,14 @@ html,body{
 
 /* Accesibilidad */
 .sr-only{
-  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
-  overflow:hidden; clip:rect(0,0,0,0); border:0;
+  position:absolute; 
+  width:1px; 
+  height:1px; 
+  padding:0; 
+  margin:-1px;
+  overflow:hidden; 
+  clip:rect(0,0,0,0); 
+  border:0;
 }
 
 /* ===== Header ===== */
@@ -496,4 +502,40 @@ html.no-scroll, body.no-scroll{ overflow:hidden; }
     grid-template-columns: 1fr;         /* 1 columna */
     padding-inline-end: 16px;           /* despega la barra del borde de la imagen */
   }
+}
+
+/* === PATCH: botón ✕ del modal de galería — estilo correcto y posición fija === */
+#modalGaleria .cerrar{
+  position: absolute;
+  top: 12px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border: 0;
+  border-radius: 9999px;
+  background: rgba(0,0,0,.35) !important;
+  color: #fff !important;
+  line-height: 1;
+  font-size: 20px;
+  z-index: 3;
+  cursor: pointer;
+  backdrop-filter: blur(2px);
+  pointer-events: auto;
+}
+#modalGaleria .cerrar:hover{
+  background: rgba(0,0,0,.45) !important;
+}
+
+/* Asegura que las imágenes sean clicables y con “zoom-in” */
+#modalGaleria .imagenes-galeria img{
+  cursor: zoom-in;
+  pointer-events: auto;
+}
+
+/* Por si algún estilo previo estuviera tapando clics en el panel */
+#modalGaleria .modal-contenido-galeria{
+  position: relative; /* referencia para la ✕ */
+  z-index: 1;
 }
