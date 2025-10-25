@@ -91,6 +91,7 @@
       <div>
         <h1 class="titulo">Joana Mora</h1>
         <h2 class="subtitulo">Nails Studio</h2>
+        <p class="designer">Nail Designer</p>
       </div>
       <div class="header-buttons">
         <a href="https://wa.me/5213344782571?text=Hola%20Joana,%20quiero%20agendar%20una%20cita%20💅"
@@ -118,25 +119,6 @@
       <p>Transformamos tu esencia en arte, un ritual de belleza que convierte cada uña en algo único.</p>
     </div>
     <p class="elige">¡Elige, personaliza y luce!</p>
-  </section>
-
-  <!-- 🔥 CTA de Tarjeta + Finder -->
-  <section class="home-cta-wrap" aria-label="Tarjeta de sellos">
-    <!-- CTA obtener tarjeta -->
-    <div class="cta-card">
-      <a class="cta-button" href="registro.html">✨ Obtén tu tarjeta de Fidelidad</a>
-      <p style="margin:8px 0 0;color:#6b7280">Regístrate en segundos y recibe tu QR para acumular sellos en cada visita y obtener recompensas.</p>
-    </div>
-
-    <!-- Finder: ¿Ya tienes tarjeta? -->
-    <div class="finder-card">
-      <div class="finder-title">¿Ya tienes tarjeta?</div>
-      <div class="finder-row">
-        <input id="phone" placeholder="Tu teléfono (WhatsApp)">
-        <button id="find">Ver mi tarjeta</button>
-      </div>
-      <div id="findStatus" class="finder-status"></div>
-    </div>
   </section>
 
   <!-- Galería -->
@@ -182,9 +164,56 @@
         <img src="assets/img/img25.jpg" alt="Diseño 25"  onclick="abrirLightbox(this.src)">
         <img src="assets/img/img26.jpg" alt="Diseño 26"  onclick="abrirLightbox(this.src)">
         <img src="assets/img/img27.jpg" alt="Diseño 27"  onclick="abrirLightbox(this.src)">
+        <img src="assets/img/img28.jpg" alt="Diseño 28"  onclick="abrirLightbox(this.src)">
       </div>
     </div>
   </div>
+
+  <!-- 🔥 CTA de Tarjeta + Finder -->
+  <section class="home-cta-wrap" aria-label="Tarjeta de sellos">
+    <!-- CTA obtener tarjeta -->
+    <div class="cta-card">
+      <a class="cta-button" href="registro.html">✨ Obtén tu tarjeta de Fidelidad</a>
+      <p style="margin:8px 0 0;color:#6b7280">Regístrate en segundos y recibe tu QR para acumular sellos en cada visita y obtener recompensas.</p>
+    </div>
+
+    <!-- Finder: ¿Ya tienes tarjeta? -->
+    <div class="finder-card">
+      <div class="finder-title">¿Ya tienes tarjeta?</div>
+      <div class="finder-row">
+        <input id="phone" placeholder="Tu teléfono (WhatsApp)">
+        <button id="find">Ver mi tarjeta</button>
+      </div>
+      <div id="findStatus" class="finder-status"></div>
+    </div>
+  </section>
+
+<!-- Botón Programa Referidas -->
+<button id="btnReferidas" class="btn-referidas" data-open="modalReferidas">
+  💜 Programa Referidas
+</button>
+
+<!-- Modal Programa Referidas -->
+<div id="modalReferidas" class="modal" aria-hidden="true" data-lock-scroll>
+  <div class="modal-contenido" role="dialog" aria-modal="true" aria-labelledby="tituloReferidas">
+    <button class="cerrar" id="cerrarReferidas" data-close="modalReferidas" aria-label="Cerrar">&times;</button>
+    <h2 id="tituloReferidas">Programa de Referidas 💖</h2>
+    <p>¡Invita a tus amigas y gana descuentos en tu próximo servicio!</p>
+    <ul>
+   <li>🎁 Te regalamos un sello por cada amiga nueva que agendes.</li>
+  <li>💅 Tu amiga recibe un 10% en su primera cita.</li>
+  <li>📱 Además, también recibe 10% extra si nos sigue en redes sociales y descarga nuestra app oficial</li>
+  <li>✨ Sin límite de referidas: ¡más amigas, más beneficios!</li>
+  <li>🏆 Canjea tus sellos por descuentos o servicios gratis.</li>
+    </ul>
+    <p>Que estan esperando hermosas, corran la voz, entre mas refieran mas ganan. Diles a tus amigas que mencionen tu nombre y número de telefono cuando agenden</p>
+    
+  </div>
+</div>
+
+
+
+  
 
   <!-- Proceso + Form -->
   <form action="https://formsubmit.co/jomoranails@gmail.com" method="POST" enctype="multipart/form-data">
@@ -255,7 +284,7 @@
 
         <label for="imagenDiseno">Adjuntar imagen del diseño:</label>
         <div class="input-file-wrapper">
-          <input type="file" id="imagenDiseno" name="imagenDiseno" class="input-file" accept="image/*" required>
+          <input type="file" id="imagenDiseno" name="imagenDiseno" class="input-file" accept="image/*" >
           <small id="file-name" class="file-name">Ningún archivo seleccionado</small>
         </div>
 
